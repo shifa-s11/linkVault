@@ -8,6 +8,8 @@ import BookmarkList from '@/components/BookmarkList'
 import Navbar from '@/components/Navbar'
 
 export default function Dashboard() {
+
+  
   const router = useRouter()
   const [userId, setUserId] = useState<string | null>(null)
   const [email, setEmail] = useState<string | null>(null)
