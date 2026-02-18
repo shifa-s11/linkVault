@@ -208,8 +208,11 @@ ALTER TABLE bookmarks REPLICA IDENTITY FULL;
 
 ## 📸 Screenshots
 
-### 🔐 Login Page
-![Login Page](public/screenshots/login.png)
+### 🔐 Login Experience
 
-### 📊 Dashboard
-![Dashboard](public/screenshots/dashboard.png)
+<img src="public/screenshots/login.png" width="900" />
+
+### 📊 Dashboard View
+
+<img src="public/screenshots/dashboard.png" width="900" />
+
