@@ -210,9 +210,9 @@ ALTER TABLE bookmarks REPLICA IDENTITY FULL;
 
 ### 🔐 Login Experience
 
-<img src="public/screenshots/login.png" width="900" />
+![Login](./public/screenshots/login.png)
 
 ### 📊 Dashboard View
 
-<img src="public/screenshots/dashboard.png" width="900" />
+<img src="./public/screenshots/dashboard.png" width="900" />
 
