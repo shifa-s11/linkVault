@@ -1,36 +1,175 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🔗 LinkVault
 
-## Getting Started
+LinkVault is a modern, real-time bookmark manager built with Next.js and Supabase.
 
-First, run the development server:
+It allows users to securely store and manage bookmarks with instant real-time updates across multiple tabs.
+
+🌍 Live Demo: https://your-vercel-url.vercel.app
+
+---
+
+## ✨ Features
+
+- 🔐 Google OAuth Authentication (Supabase Auth)
+- ⚡ Real-time bookmark sync across tabs
+- 🌗 Persistent Dark / Light theme
+- ✨ Animated particle background
+- 💎 Glassmorphic UI with smooth animations
+- 🚀 Optimistic UI updates
+- 🧠 URL normalization and validation
+- 📱 Fully responsive design
+
+---
+
+## 🛠 Tech Stack
+
+- Next.js (App Router)
+- TypeScript
+- Supabase (Auth + Database + Realtime)
+- Tailwind CSS
+- Framer Motion
+- Lucide React
+- Sonner (Toast notifications)
+
+---
+
+## 🧠 Architecture & Implementation Details
+
+### 🔐 Authentication & User Privacy
+
+- Google OAuth implemented using Supabase Auth
+- Session validation performed on dashboard load
+- Protected routes redirect unauthenticated users
+- Row Level Security (RLS) enabled
+- Each bookmark is scoped by `user_id`
+- Users can only access their own bookmarks
+
+---
+
+### ⚡ Real-Time Updates
+
+Real-time functionality is implemented using Supabase Realtime:
+
+- Subscribed to `postgres_changes`
+- Filtered events by authenticated user ID
+- Insert and delete operations trigger instant UI updates
+- Enabled `REPLICA IDENTITY FULL` to support delete events
+
+This ensures live synchronization across multiple tabs.
+
+---
+
+### 🎨 UI & Experience
+
+- Custom animated particle background
+- Glassmorphic card design
+- Smooth hover and modal animations
+- Dark mode persistence using localStorage
+- Optimistic UI updates for instant feedback
+
+---
+
+## 🚀 Getting Started
+
+### 1️⃣ Clone the repository
 
 ```bash
+git clone https://github.com/yourusername/linkvault.git
+cd linkvault
+Install Dependencies
+npm install
+
+3️⃣ Configure Environment Variables
+
+Create a .env.local file:
+
+NEXT_PUBLIC_SUPABASE_URL=your_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+
+4️⃣ Supabase Setup
+
+Enable Google OAuth in Authentication → Providers
+
+Add redirect URL:
+
+http://localhost:3000/auth/callback
+
+
+For production:
+
+https://your-vercel-url.vercel.app/auth/callback
+
+
+Create bookmarks table and enable Row Level Security (RLS)
+
+Enable realtime replication and run:
+
+ALTER TABLE bookmarks REPLICA IDENTITY FULL;
+
+5️⃣ Run Development Server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📂 Project Structure
 
-## Learn More
+.
+├── app
+│ ├── layout.tsx
+│ ├── page.tsx
+│ ├── dashboard
+│ │ ├── layout.tsx
+│ │ └── page.tsx
+│ └── auth
+│ └── callback
+│ └── page.tsx
+│
+├── components
+│ ├── BookmarkForm.tsx
+│ ├── BookmarkList.tsx
+│ ├── Navbar.tsx
+│ └── ParticleBackground.tsx
+│
+├── lib
+│ └── supabase-client.ts
+│
+├── public
+│ └── favicon.svg (or icon.png)
+│
+├── next.config.ts
+├── package.json
+├── README.md
+├── tsconfig.json
+└── .env.local (not committed)
 
-To learn more about Next.js, take a look at the following resources:
+## 🧩 Challenges Faced & Solutions
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 1️⃣ OAuth Redirect Hash Issue
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Problem:**  
+After Google OAuth login, users were occasionally redirected to `/dashboard#` due to hash fragments appended during the Supabase authentication flow.
 
-## Deploy on Vercel
+**Solution:**  
+Implemented a dedicated `/auth/callback` route to properly resolve the session before performing a clean redirect to `/dashboard`.  
+This ensured consistent navigation without URL artifacts.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 2️⃣ Real-Time Delete Events Not Syncing
+
+**Problem:**  
+Insert events were syncing correctly across tabs, but delete operations were not triggering realtime updates.
+
+**Root Cause:**  
+PostgreSQL requires full row identity for delete event propagation in logical replication.
+
+**Solution:**  
+Enabled full replica identity for the `bookmarks` table:
+
+```sql
+ALTER TABLE bookmarks REPLICA IDENTITY FULL;
+
+## 📸 Screenshots
+
