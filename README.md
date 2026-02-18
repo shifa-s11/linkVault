@@ -71,93 +71,127 @@ This ensures live synchronization across multiple tabs.
 
 ## 🚀 Getting Started
 
-### 1️⃣ Clone the repository
+### 1️⃣ Clone the Repository
 
 ```bash
 git clone https://github.com/yourusername/linkvault.git
 cd linkvault
-Install Dependencies
+```
+
+### 2️⃣ Install Dependencies
+
+```bash
 npm install
+```
 
-3️⃣ Configure Environment Variables
+### 3️⃣ Configure Environment Variables
 
-Create a .env.local file:
+Create a `.env.local` file in the root directory:
 
+```env
 NEXT_PUBLIC_SUPABASE_URL=your_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+```
 
-4️⃣ Supabase Setup
+### 4️⃣ Supabase Setup
 
-Enable Google OAuth in Authentication → Providers
+Enable Google OAuth in **Authentication → Providers**.
 
 Add redirect URL:
 
+```
 http://localhost:3000/auth/callback
-
+```
 
 For production:
 
+```
 https://your-vercel-url.vercel.app/auth/callback
+```
 
-
-Create bookmarks table and enable Row Level Security (RLS)
+Create the `bookmarks` table and enable Row Level Security (RLS).
 
 Enable realtime replication and run:
 
+```sql
 ALTER TABLE bookmarks REPLICA IDENTITY FULL;
+```
 
-5️⃣ Run Development Server
+### 5️⃣ Run Development Server
+
+```bash
 npm run dev
+```
 
-Open:
+Open in browser:
 
+```
 http://localhost:3000
+```
+
+---
 
 ## 📂 Project Structure
 
+```
 .
 ├── app
-│ ├── layout.tsx
-│ ├── page.tsx
-│ ├── dashboard
-│ │ ├── layout.tsx
-│ │ └── page.tsx
-│ └── auth
-│ └── callback
-│ └── page.tsx
+│   ├── layout.tsx
+│   ├── page.tsx
+│   ├── dashboard
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   └── auth
+│       └── callback
+│           └── page.tsx
 │
 ├── components
-│ ├── BookmarkForm.tsx
-│ ├── BookmarkList.tsx
-│ ├── Navbar.tsx
-│ └── ParticleBackground.tsx
+│   ├── BookmarkForm.tsx
+│   ├── BookmarkList.tsx
+│   ├── Navbar.tsx
+│   └── ParticleBackground.tsx
 │
 ├── lib
-│ └── supabase-client.ts
+│   └── supabase-client.ts
 │
 ├── public
-│ └── favicon.svg (or icon.png)
+│   └── favicon.svg
 │
 ├── next.config.ts
 ├── package.json
 ├── README.md
 ├── tsconfig.json
 └── .env.local (not committed)
+```
+
+---
 
 ## 🧩 Challenges Faced & Solutions
 
 ### 1️⃣ OAuth Redirect Hash Issue
 
 **Problem:**  
-After Google OAuth login, users were occasionally redirected to `/dashboard#` due to hash fragments appended during the Supabase authentication flow.
+After Google OAuth login, users were occasionally redirected to `/dashboard#`.
 
 **Solution:**  
-Implemented a dedicated `/auth/callback` route to properly resolve the session before performing a clean redirect to `/dashboard`.  
-This ensured consistent navigation without URL artifacts.
+Implemented a dedicated `/auth/callback` route to properly resolve the session before redirecting cleanly to `/dashboard`.
 
 ---
 
 ### 2️⃣ Real-Time Delete Events Not Syncing
+
+**Problem:**  
+Delete operations were not syncing across tabs.
+
+**Root Cause:**  
+PostgreSQL requires full row identity for delete event propagation.
+
+**Solution:**
+
+```sql
+ALTER TABLE bookmarks REPLICA IDENTITY FULL;
+```
+
 
 **Problem:**  
 Insert events were syncing correctly across tabs, but delete operations were not triggering realtime updates.
@@ -170,6 +204,7 @@ Enabled full replica identity for the `bookmarks` table:
 
 ```sql
 ALTER TABLE bookmarks REPLICA IDENTITY FULL;
+```
 
 ## 📸 Screenshots
 
